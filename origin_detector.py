@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import cv2
 import numpy as np
 
@@ -11,7 +13,7 @@ class OriginDetector:
 
         self.hough_thresh = 200
 
-    def detect_origin(self, img: np.ndarray):
+    def detect_origin(self, img: np.ndarray) -> Tuple[int,int]:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         edges = cv2.Canny(gray, self.canny_thresh1, self.canny_thresh2, apertureSize=self.canny_size)

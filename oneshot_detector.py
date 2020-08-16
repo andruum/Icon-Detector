@@ -1,9 +1,12 @@
+from typing import Tuple
+
 import cv2
 import numpy as np
 import torch
 
 from os2d.modeling.model import build_os2d_from_config
 from os2d.config import cfg
+from os2d.structures.bounding_box import BoxList
 from os2d.structures.feature_map import FeatureMapSize
 from os2d.utils import get_image_size_after_resize_preserving_aspect_ratio
 from torchvision.transforms.functional import to_tensor, normalize
@@ -21,7 +24,7 @@ class OneShotDetector:
         self.max_detections = 1
         self.score_threshold = score_threshold
 
-    def _preprocess(self, img:np.ndarray, size:int):
+    def _preprocess(self, img:np.ndarray, size:int) -> torch.Tensor:
         h, w = get_image_size_after_resize_preserving_aspect_ratio(h=img.shape[0],
                                                                    w=img.shape[1],
                                                                    target_size=size)
@@ -35,7 +38,7 @@ class OneShotDetector:
 
         return img
 
-    def detect(self, target, source):
+    def detect(self, target, source) -> Tuple[BoxList, torch.Tensor]:
         target = self._preprocess(target, cfg.model.class_image_size)
         source = self._preprocess(source, self.source_img_size)
 

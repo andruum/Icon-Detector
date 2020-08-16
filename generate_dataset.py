@@ -1,5 +1,6 @@
 import os
 import random
+from typing import Tuple, List
 
 import cv2
 import numpy as np
@@ -7,7 +8,7 @@ import pandas as pd
 import glob
 
 
-def put_icon(img, icon, bbox_point, size):
+def put_icon(img:np.ndarray, icon:np.ndarray, bbox_point:Tuple[int,int], size:int) -> np.ndarray:
     img_width = img.shape[1]
     img_height = img.shape[0]
 
@@ -35,11 +36,11 @@ def put_icon(img, icon, bbox_point, size):
     return img
 
 
-def load(path, color=cv2.COLOR_BGR2RGB):
+def load(path: str, color=cv2.COLOR_BGR2RGB) -> np.ndarray:
     return cv2.cvtColor(cv2.imread(path, cv2.IMREAD_UNCHANGED), color)
 
 
-def get_pos(area, icon_size, section):
+def get_pos(area:List[int], icon_size:Tuple[int], section:int) -> Tuple[int, int]:
     section %= 4
     w = (area[2]-area[0])//2
     h = (area[3]-area[1])//2

@@ -1,11 +1,12 @@
 import argparse
+from typing import Tuple
 
 import cv2
 from oneshot_detector import OneShotDetector
 from origin_detector import OriginDetector
 
 
-def parse_args():
+def parse_args() -> Tuple[str,str]:
     parser = argparse.ArgumentParser(description="Icons detector on the image")
     parser.add_argument(
         "--target_images",
