@@ -71,21 +71,21 @@ def build_eval_dataset(data_path, name, eval_scale, cache_images=False, no_image
     return dataset
 
 
-def build_grozi_dataset(data_path, name, eval_scale, cache_images=False, no_image_reading=False, logger_prefix="OS2D"):
+def build_icons_dataset(data_path, name, eval_scale, cache_images=False, no_image_reading=False, logger_prefix="OS2D"):
     logger = logging.getLogger(f"{logger_prefix}.dataset")
-    logger.info("Preparing the GroZi-3.2k dataset: version {0}, eval scale {1}, image caching {2}".format(name, eval_scale, cache_images))
+    logger.info("Preparing the dataset: version {0}, eval scale {1}, image caching {2}".format(name, eval_scale, cache_images))
 
     annotation_folder="classes"
     image_size = 3264
-    classdatafile = os.path.join(data_path, "grozi", annotation_folder,"grozi.csv")
-    gt_path = os.path.join(data_path, "grozi", annotation_folder, "images")
-    image_path = os.path.join(data_path, "grozi", "src", str(image_size))
+    classdatafile = os.path.join(data_path, "icons", annotation_folder,"data.csv")
+    gt_path = os.path.join(data_path, "icons", annotation_folder, "images")
+    image_path = os.path.join(data_path, "icons", "src")
     gtboxframe = read_annotation_file(classdatafile)
 
     # define a subset split (using closure)
     subset_name = name.lower()
-    assert subset_name.startswith("grozi"), ""
-    subset_name = subset_name[len("grozi"):]
+    assert subset_name.startswith("icons"), ""
+    subset_name = subset_name[len("icons"):]
     subsets = ["train", "val-old-cl", "val-new-cl", "val-all", "train-mini"]
     found_subset = False
     for subset in subsets:
@@ -285,8 +285,8 @@ def build_instre_dataset(data_path, name, eval_scale, cache_images=False, no_ima
 
 
 def build_dataset_by_name(data_path, name, eval_scale, cache_images=False, no_image_reading=False, logger_prefix="OS2D"):
-    if name.lower().startswith("grozi"):
-        return build_grozi_dataset(data_path, name, eval_scale, cache_images=cache_images, no_image_reading=no_image_reading, logger_prefix=logger_prefix)
+    if name.lower().startswith("icons"):
+        return build_icons_dataset(data_path, name, eval_scale, cache_images=cache_images, no_image_reading=no_image_reading, logger_prefix=logger_prefix)
     elif name.lower().startswith("instre"):
         return build_instre_dataset(data_path, name, eval_scale, cache_images=cache_images, no_image_reading=no_image_reading, logger_prefix=logger_prefix)
     else:
