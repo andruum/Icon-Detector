@@ -23,6 +23,9 @@ class OriginDetector:
         min_y_horizontal = np.inf
         min_horizontal_line = None
 
+        if lines is None:
+            return None, None
+
         for line in lines:
             r, theta = line[0]
 
