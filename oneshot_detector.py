@@ -11,7 +11,7 @@ from torchvision.transforms.functional import to_tensor, normalize
 
 class OneShotDetector:
 
-    def __init__(self, cfg_path:str):
+    def __init__(self, cfg_path:str, score_threshold:float = 0.5):
         cfg.merge_from_file(cfg_path)
         cfg.is_cuda = torch.cuda.is_available()
         cfg.freeze()
@@ -19,7 +19,7 @@ class OneShotDetector:
 
         self.source_img_size = 1500
         self.max_detections = 1
-        self.score_threshold = 0.4
+        self.score_threshold = score_threshold
 
     def _preprocess(self, img:np.ndarray, size:int):
         h, w = get_image_size_after_resize_preserving_aspect_ratio(h=img.shape[0],
@@ -29,31 +29,33 @@ class OneShotDetector:
 
         img = to_tensor(img)
         img = normalize(img, self.img_normalization["mean"], self.img_normalization["std"])
-        img = img.unsqueeze(0)
         if cfg.is_cuda:
             img = img.cuda()
 
         return img
 
-    def detect(self, target, source):
-        target = self._preprocess(target, cfg.model.class_image_size)
+    def detect(self, targets, source):
+        targets = [self._preprocess(t, cfg.model.class_image_size) for t in targets]
         source = self._preprocess(source, self.source_img_size)
+        source = source.unsqueeze(0)
+        self.max_detections = len(targets)
 
         with torch.no_grad():
             loc_prediction_batch, class_prediction_batch, _, fm_size, transform_corners_batch = \
-                self.net(images=source, class_images=target)
+                self.net(images=source, class_images=targets)
 
         image_loc_scores_pyramid = [loc_prediction_batch[0]]
         image_class_scores_pyramid = [class_prediction_batch[0]]
         img_size_pyramid = [FeatureMapSize(img=source)]
         transform_corners_pyramid = [transform_corners_batch[0]]
 
-        class_ids = [0]
+        class_ids = [i for i in range(len(targets))]
         boxes = self.box_coder.decode_pyramid(image_loc_scores_pyramid, image_class_scores_pyramid,
                                          img_size_pyramid, class_ids,
                                          nms_iou_threshold=cfg.eval.nms_iou_threshold,
                                          nms_score_threshold=cfg.eval.nms_score_threshold,
                                          transform_corners_pyramid=transform_corners_pyramid)
+        boxes.remove_field("default_boxes")
 
         scores = boxes.get_field("scores")
 
