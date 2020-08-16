@@ -29,27 +29,26 @@ class OneShotDetector:
 
         img = to_tensor(img)
         img = normalize(img, self.img_normalization["mean"], self.img_normalization["std"])
+        img = img.unsqueeze(0)
         if cfg.is_cuda:
             img = img.cuda()
 
         return img
 
-    def detect(self, targets, source):
-        targets = [self._preprocess(t, cfg.model.class_image_size) for t in targets]
+    def detect(self, target, source):
+        target = self._preprocess(target, cfg.model.class_image_size)
         source = self._preprocess(source, self.source_img_size)
-        source = source.unsqueeze(0)
-        self.max_detections = len(targets)
 
         with torch.no_grad():
             loc_prediction_batch, class_prediction_batch, _, fm_size, transform_corners_batch = \
-                self.net(images=source, class_images=targets)
+                self.net(images=source, class_images=target)
 
         image_loc_scores_pyramid = [loc_prediction_batch[0]]
         image_class_scores_pyramid = [class_prediction_batch[0]]
         img_size_pyramid = [FeatureMapSize(img=source)]
         transform_corners_pyramid = [transform_corners_batch[0]]
 
-        class_ids = [i for i in range(len(targets))]
+        class_ids = [0]
         boxes = self.box_coder.decode_pyramid(image_loc_scores_pyramid, image_class_scores_pyramid,
                                          img_size_pyramid, class_ids,
                                          nms_iou_threshold=cfg.eval.nms_iou_threshold,

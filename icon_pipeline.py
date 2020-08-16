@@ -9,14 +9,20 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Icons detector on the image")
     parser.add_argument(
         "--target_images",
-        default=['data/test/icons-huawei/gp.png', 'data/test/icons-huawei/settings.jpg'],
+        default=[
+            'data/test/icons-samsung/0.jpg',
+            'data/test/icons-samsung/24.jpg',
+            'data/test/icons-samsung/35.jpg',
+            'data/test/icons-samsung/67.jpg',
+            'data/test/icons-samsung/85.jpg',
+        ],
         help="Target image to find",
         type=str,
         nargs='+',
     )
     parser.add_argument(
         "--source_image",
-        default='data/test/huawei_real.jpg',
+        default='data/test/samsung.jpg',
         help="Image for search",
         type=str,
     )
@@ -43,8 +49,13 @@ def main():
     origin_detector = OriginDetector()
 
     origin = origin_detector.detect_origin(source)
-    bboxes, scores = detector.detect(targets, source)
-    print(scores)
+
+    bboxes = []
+    for target in targets:
+        bbox, score = detector.detect(target, source)
+        if bbox is None: continue
+        bboxes.append(bbox[0])
+        print(score)
 
     source = cv2.cvtColor(source, cv2.COLOR_RGB2BGR)
 
