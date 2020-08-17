@@ -2,7 +2,7 @@
 
 Основано на решении из статьи:  [OS2D: One-Stage One-Shot Object Detection by Matching Anchor Features  
 Anton Osokin, Denis Sumin, Vasily Lomakin  ](https://arxiv.org/pdf/2003.06800.pdf), 2020,
-[Source code](https://github.com/aosokin/os2d)
+[Исходный код](https://github.com/aosokin/os2d)
 
 ### Установка окружения
 ##### [Предпочтительный способ] Установка с conda и cudatoolkit
