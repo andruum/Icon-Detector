@@ -54,7 +54,7 @@ python3 icon_pipeline.py --target_images data/test/icons-huawei/gp2.jpg --source
 `target_images` - пути к иконкам для поиска,
 `source_images` - пути к изображениям для поиска
 
-###Примеры
+### Примеры
 
 В приведенных примерах иконки не были использованны в обучающей выборке, 
 нейросеть "видит" иконки в запросе впервые,
@@ -68,7 +68,7 @@ python3 icon_pipeline.py --target_images data/test/icons-huawei/gp2.jpg --source
 
 ![alt text](result_1.jpg) 
 
-###В заключение
+### В заключение
 Изначальной идеей было использовать решение на основе трекинга, т.к. постановка задачи схожа. Например:
 [SiamRPN++: Evolution of Siamese Visual Tracking with Very Deep Networks](https://arxiv.org/pdf/1812.11703v1.pdf).
 Недостаток применения этого решения в том, что он предполагает использование информации о объекте с предыдущих кадров,
